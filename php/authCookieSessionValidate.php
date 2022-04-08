@@ -15,12 +15,11 @@ $db_handle = new DBController();
 $util = new Util();
 
 date_default_timezone_set('Europe/Istanbul');
-$IP_Adresi = $_SERVER["REMOTE_ADDR"];
-$Tarih = time();
+$IP_Address = $_SERVER["REMOTE_ADDR"];
 
 
 if(isset($_GET["msg"])){
-	$msg=str_replace("</script>","",$_GET["msg"]);
+	$msg=str_replace("</script>","",$_GET["msg"]); // script tags are not allowed
 	if($msg!=""){
 		echo "<script>alert('$msg')</script>";
 	}
@@ -37,9 +36,9 @@ $isLoggedIn = false;
 
 // Check if loggedin session and redirect if session exists
 
-//echo $_SESSION["member_id"]);
+//echo $_SESSION["loggedin_user_id"]);
 
-if (! empty($_SESSION["member_id"])) {
+if (! empty($_SESSION["loggedin_user_id"])) {
     $isLoggedIn = true;
 }
 // Check if loggedin session exists
@@ -80,16 +79,14 @@ else if (! empty($_COOKIE["member_login"]) && ! empty($_COOKIE["random_password"
     }
 }
 
-$member_id = 1;
+$user_id = 1;
 if (!$isLoggedIn) {
-  $thisuser = $auth->getMemberById(1);
+  $thisUser = $auth->getMemberById(1)[0];
 } else {
-  $member_id = $_SESSION["member_id"];
-  $thisuser = $auth->getMemberById($member_id);
-  echo $auth->edit("users", $member_id, "last_activity", $Tarih);
-  if (!strpos($thisuser[0]["ip"], $IP_Adresi)) {
-    echo $auth->edit("users", $member_id, "ip", $thisuser[0]["ip"] . "," . $IP_Adresi);
+  $user_id = $_SESSION["loggedin_user_id"];
+  $thisUser = $auth->getMemberById($user_id)[0];
+  echo $auth->edit("users", $user_id, "last_activity", $current_date);
+  if (!strpos($thisUser["ip"], $IP_Address)) {
+    echo $auth->edit("users", $user_id, "ip", $thisUser["ip"] . "," . $IP_Address);
   }
-  //echo '<script>alert("'.$member_id.'");</script>';
 }
-?>

@@ -12,7 +12,8 @@ class DBController {
 	
 	function connectDB() {
 		$conn = mysqli_connect($this->host,$this->user,$this->password,$this->database);
-		return $conn;
+        $conn->set_charset("utf8");
+        return $conn;
 	}
 	
     function runBaseQuery($query) {
@@ -67,4 +68,3 @@ class DBController {
         $sql->execute();
     }
 }
-?>
